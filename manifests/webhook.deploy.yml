@@ -23,6 +23,7 @@ spec:
           secretName: webhook-tls
       containers:
       - image: ashbourne1990/simple-k8s-admission-controller:latest
+        imagePullPolicy: Always
         name: simple-k8s-admission-controller
         ports:
         - containerPort: 443
