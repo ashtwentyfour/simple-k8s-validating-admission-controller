@@ -6,6 +6,20 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+def send_response(result, uid, message):
+    """Send JSON response"""
+    return jsonify({
+       "apiVersion": "admission.k8s.io/v1",
+       "kind": "AdmissionReview",
+       "response": {
+          "allowed": result,
+          "uid": uid,
+          "status": {
+             "message": message
+          }
+        }
+    })
+
 def validate_images(containers, required_registry):
     """Validates container image registries"""
     for container in containers:
@@ -42,18 +56,9 @@ def validate_deployment():
 
     containers = deployment["spec"]["template"]["spec"]["containers"]
     if not validate_images(containers, required_registry):
-        return jsonify({
-           "apiVersion": "admission.k8s.io/v1",
-           "kind": "AdmissionReview",
-           "response": {
-              "allowed": False,
-              "uid": req["request"]["uid"],
-              "status": {
-                 "message": "select container images " + \
-                           "from registry => " + required_registry
-              }
-           }
-        })
+        message = "select container images " + \
+                   "from registry - " + required_registry
+        return send_response(False, req["request"]["uid"], message)
 
     labels = deployment["metadata"]["labels"]
     try:
@@ -62,29 +67,10 @@ def validate_deployment():
         print(f"KeyError: {err}")
     check_labels = validate_labels(labels.keys(), required_labels)
     if not check_labels["status"]:
-        return jsonify({
-           "apiVersion": "admission.k8s.io/v1",
-           "kind": "AdmissionReview",
-           "response": {
-              "allowed": False,
-              "uid": req["request"]["uid"],
-              "status": {
-                 "message": check_labels["missing_label"] + " label not set"
-              }
-           }
-        })
+        message = "labels required are - " + str(required_labels)
+        return send_response(False, req["request"]["uid"], message)
 
-    return jsonify({
-       "apiVersion": "admission.k8s.io/v1",
-       "kind": "AdmissionReview",
-       "response": {
-          "allowed": True,
-          "uid": req["request"]["uid"],
-          "status": {
-             "message": "deployment validated"
-          }
-       }
-    })
+    return send_response(True, req["request"]["uid"], "deployment validated")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=443, \
