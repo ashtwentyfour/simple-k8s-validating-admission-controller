@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: simple-admission-controller
+  name: simple-admission-controller
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-admission-controller
+  template:
+    metadata:
+      labels:
+        app: simple-admission-controller
+    spec:
+      restartPolicy: Always
+      volumes:
+      - name: webhook-tls
+        secret:
+          secretName: webhook-tls
+      containers:
+      - image: ashbourne1990/simple-k8s-admission-controller:latest
+        name: simple-k8s-admission-controller
+        ports:
+        - containerPort: 443
+        env:
+        - name: IMAGE_REGISTRY
+          value: registry.redhat.io
+        - name: LABELS
+          value: app.kubernetes.io/name,environment
+        - name: FLASK_ENV
+          value: production
+        volumeMounts:
+        - mountPath: "/TLS"
+          name: webhook-tls
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /health/ready
+            port: 443
+            scheme: HTTPS
+          initialDelaySeconds: 3
+          periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: simple-admission-controller
+  name: simple-admission-controller
+  namespace: default
+spec:
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 443
+  selector:
+    app: simple-admission-controller

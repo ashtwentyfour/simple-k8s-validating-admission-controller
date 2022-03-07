@@ -1,0 +1,43 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "simple-admission-controller.ashcorp.com"
+webhooks:
+  - name: "simple-admission-controller.ashcorp.com"
+    failurePolicy: Fail
+    rules:
+      - apiGroups: ["apps"]
+        apiVersions: ["*"]
+        operations: ["CREATE"]
+        resources: ["deployments"]
+        scope: "*"
+    clientConfig:
+      service:
+        namespace: default
+        name: simple-admission-controller
+        path: /validate-deploy
+        port: 443
+      caBundle: |
+        LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURSekNDQWkrZ0F3SUJBZ0lVVGsvRXlqOUNy
+        RkhBbkEvbFFzdnV1WXVtQmpRd0RRWUpLb1pJaHZjTkFRRUwKQlFBd016RUxNQWtHQTFVRUJoTUNR
+        VlV4SkRBaUJnTlZCQU1NRzNOcGJYQnNaUzFoWkcxcGMzTnBiMjR0WTI5dQpkSEp2Ykd4bGNqQWVG
+        dzB5TWpBek1EY3dNelUxTkRKYUZ3MHlNekF6TURjd016VTFOREphTURNeEN6QUpCZ05WCkJBWVRB
+        a0ZWTVNRd0lnWURWUVFEREJ0emFXMXdiR1V0WVdSdGFYTnphVzl1TFdOdmJuUnliMnhzWlhJd2dn
+        RWkKTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFEa01HQ1lkR3hJRW1qYmpk
+        MWNkY2pqRENEbQpFTStiNHdFd1AxOHI0Q09vMjREZnNaY1g3RFF5UXN0dXBod0xiWVlESmwwZW5m
+        Q1dzVjc0WTVxVkswUm9Td2VTCjhJYkQvUmxIYVNDUlVnU1JCZDNlbTlIQVVlY3FnQnpxV3duNTJu
+        aDBmUitHdEtZc2F2US93b3BsQW9ES2RNY3UKZkxCcXFTL2FrY0tQQmdSN2Nkc20wUTZKOUFvWmsx
+        dzdvR1ZSVmt1RHdnUmhRYk5mZllKandnZUQ4TURZTG1vNApIdW1IL0FWK0RSY29LY3Jqc2lnQnc4
+        dWJGZ3Zicnd1c1ltRFVXSEJ6NENsbExVVVhSZ0o2VU1nRHg0UVpxbXZJCjF1S1VrOXQrU2NTYkJ5
+        L296YnA5eEx6eWhZOWUzcmY5bmRXNVZrb2l4ekU0bU9RNEJVdzdSQ2lNME5VckFnTUIKQUFHalV6
+        QlJNQjBHQTFVZERnUVdCQlNxU1lEV1h2bWkrODI1R1pSY2VjbVdrZHlOUGpBZkJnTlZIU01FR0RB
+        VwpnQlNxU1lEV1h2bWkrODI1R1pSY2VjbVdrZHlOUGpBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUEw
+        R0NTcUdTSWIzCkRRRUJDd1VBQTRJQkFRQ0xKblpTYUF3MXVWK1VKN00vTEJoelRVNmthY0hNUzJN
+        dkhZSzYxNTBieVg1UFlVZnMKTk9EREJDa3hsUnNVa3J1bEE5TUVUT2JXekpuYlU5NXBWVG1VSVZj
+        ZWpjS3F6YlE5ZzNYRW1hMVBJc2VBOGdGdgpMMDZuWUU5WTFwc0F6b1pWcS9CUWNrNVMxTjE3aVFx
+        Ym9weGVsR25LTXArRkM4eTB3dkhMNGpvOFVLTjVLbzNoCitxdExLeEw4WFlWaUtPNnBBVWZ6L2t0
+        SndsRTI2TWMzeWJISU5sNERCeTRpUjAxakNVaURFcitLQWJKRjVwWkoKVXg4NU9lOHpycnRXV2Vt
+        VEduV2hBdFlJU1ZPVjhHRW9WcjFpV24yVVQ0U1JlakdEWkc4aWdnbVlwOXBCaUFQOQp6UGgxMzFX
+        Q2VXeUF3TjhWbW5BY3kraTdsMTdlWi9udExoa20KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
