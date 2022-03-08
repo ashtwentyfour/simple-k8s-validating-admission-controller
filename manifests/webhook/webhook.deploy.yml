@@ -29,7 +29,7 @@ spec:
         - containerPort: 443
         env:
         - name: IMAGE_REGISTRY
-          value: registry.redhat.io
+          value: myregistry2022.azurecr.io
         - name: LABELS
           value: app.kubernetes.io/name,environment
         - name: FLASK_ENV
